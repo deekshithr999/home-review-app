@@ -1,0 +1,30 @@
+
+version: '3.8'
+
+services:
+  flask-backend:
+    build: ./backend
+    volumes:
+      - ./backend/app/uploads:/app/app/uploads
+      - ./backend/data/:/app/data
+    environment:
+      - FLASK_ENV=production
+    networks:
+      - app-network
+
+  nginx:
+    build: 
+      context: .
+      dockerfile: nginx/Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./backend/app/uploads:/app/uploads
+    depends_on:
+      - flask-backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

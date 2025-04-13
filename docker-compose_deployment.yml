@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  flask-backend:
+    image: deekshithr/flask-backend:image1 
+    restart: unless-stopped  
+    environment:
+      - FLASK_ENV=production
+    volumes:
+      - /mnt/azure/uploads:/app/app/uploads
+      - /mnt/azure/data:/app/data
+    networks:
+      - app-network
+
+  nginx:
+    image: deekshithr/nginx:nginx1
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - /mnt/azure/uploads:/app/uploads
+      # - ./nginx/nginx.conf:/etc/nginx/nginx.conf  # Custom config (if needed)
+    depends_on:
+      - flask-backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

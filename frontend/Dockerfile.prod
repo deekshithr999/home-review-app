@@ -1,0 +1,15 @@
+
+# Stage 1: Build
+FROM node:18 as builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Stage 2: Create lightweight container with build output
+FROM alpine:latest
+WORKDIR /app
+RUN mkdir -p /app/build
+COPY --from=builder /app/build /app/build
+CMD ["echo", "Build complete - files are ready for Nginx"]
